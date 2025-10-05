@@ -20,7 +20,7 @@ class AirQualityController extends Controller
         $this->pythonService = $pythonService;
     }
 
-    /**
+    /*
      * Get current air quality for a location
      */
     public function getCurrent(Request $request): JsonResponse
