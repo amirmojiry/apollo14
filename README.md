@@ -253,7 +253,7 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 
 ### User Submissions
 - `POST /api/submissions` - Create new photo submission
-- `GET /api/submissions` - Get user's submission history
+- `GET /api/ubmissions` - Get user's submission history
 - `GET /api/submissions/{id}` - Get specific submission details
 
 ### Air Quality Data

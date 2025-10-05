@@ -27,19 +27,22 @@ class Submission extends Model
     ];
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'user_guess' => 'integer',
-        'actual_level' => 'integer',
-        'accuracy_score' => 'integer',
-        'location_lat' => 'decimal:8',
-        'location_lng' => 'decimal:8',
-        'air_quality_data' => 'array',
-        'submitted_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'user_guess' => 'integer',
+            'actual_level' => 'integer',
+            'accuracy_score' => 'integer',
+            'location_lat' => 'decimal:8',
+            'location_lng' => 'decimal:8',
+            'air_quality_data' => 'array',
+            'submitted_at' => 'datetime',
+        ];
+    }
 
     /**
      * Get the user that owns the submission.
