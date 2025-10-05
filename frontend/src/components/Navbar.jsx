@@ -33,12 +33,21 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-6">
-            <a
-              href="#users"
+            <Link
+              to={"/"}
               className="text-primary hover:text-primary/80 font-medium"
             >
-              Users
-            </a>
+              Home
+            </Link>
+             <Link
+              to={"/profile"}
+              className="text-primary hover:text-primary/80 font-medium"
+            >
+              Profile
+            </Link>
+          </div>
+          <div className="hidden md:flex space-x-6">
+           
           </div>
 
           {/* Mobile Hamburger */}

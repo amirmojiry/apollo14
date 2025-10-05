@@ -1,13 +1,14 @@
-// store/useSenderStore.js
 import { create } from "zustand";
 
 export const useSenderStore = create((set) => ({
   image: null,
   location: null,
   barValue: 5,
+
   setImage: (image) => set({ image }),
   setLocation: (location) => set({ location }),
   setBarValue: (barValue) => set({ barValue }),
+
   sendData: async () => {
     set((state) => {
       const payload = {
@@ -16,7 +17,8 @@ export const useSenderStore = create((set) => ({
         latitude: state.location?.latitude,
         longitude: state.location?.longitude,
       };
-      console.log("📤 Sending payload:", payload);
+
+      console.log(" Sending payload:", payload);
 
       fetch("http://localhost:4000/api/upload", {
         method: "POST",
@@ -25,7 +27,7 @@ export const useSenderStore = create((set) => ({
       })
         .then((res) => res.json())
         .then((data) => console.log(" Backend response:", data))
-        .catch((err) => console.error("Error sending data:", err));
+        .catch((err) => console.error(" Error sending data:", err));
     });
   },
 }));
