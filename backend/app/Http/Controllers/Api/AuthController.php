@@ -9,11 +9,49 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
 
 class AuthController extends Controller
 {
     /**
-     * Register a new user
+     * @OA\Post(
+     *     path="/auth/register",
+     *     tags={"Authentication"},
+     *     summary="Register a new user",
+     *     description="Create a new user account with email and password",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name", "email", "password", "password_confirmation"},
+     *             @OA\Property(property="name", type="string", maxLength=255, example="John Doe"),
+     *             @OA\Property(property="email", type="string", format="email", maxLength=255, example="john@example.com"),
+     *             @OA\Property(property="password", type="string", minLength=8, example="password123"),
+     *             @OA\Property(property="password_confirmation", type="string", minLength=8, example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User registered successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="user", type="object"),
+     *                 @OA\Property(property="token", type="string", example="1|abc123...")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validation failed"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
      */
     public function register(Request $request): JsonResponse
     {
@@ -49,7 +87,50 @@ class AuthController extends Controller
     }
 
     /**
-     * Login user
+     * @OA\Post(
+     *     path="/auth/login",
+     *     tags={"Authentication"},
+     *     summary="Login user",
+     *     description="Authenticate user with email and password",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "password"},
+     *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+     *             @OA\Property(property="password", type="string", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="user", type="object"),
+     *                 @OA\Property(property="token", type="string", example="1|abc123...")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Invalid credentials",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Invalid credentials")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validation failed"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
      */
     public function login(Request $request): JsonResponse
     {
@@ -86,7 +167,29 @@ class AuthController extends Controller
     }
 
     /**
-     * Logout user
+     * @OA\Post(
+     *     path="/auth/logout",
+     *     tags={"Authentication"},
+     *     summary="Logout user",
+     *     description="Revoke the current access token",
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Logout successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Successfully logged out")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     )
+     * )
      */
     public function logout(Request $request): JsonResponse
     {
@@ -99,7 +202,29 @@ class AuthController extends Controller
     }
 
     /**
-     * Get user profile
+     * @OA\Get(
+     *     path="/auth/profile",
+     *     tags={"Authentication"},
+     *     summary="Get user profile",
+     *     description="Retrieve the authenticated user's profile information",
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Profile retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     )
+     * )
      */
     public function profile(Request $request): JsonResponse
     {
@@ -110,7 +235,47 @@ class AuthController extends Controller
     }
 
     /**
-     * Update user profile
+     * @OA\Put(
+     *     path="/auth/profile",
+     *     tags={"Authentication"},
+     *     summary="Update user profile",
+     *     description="Update the authenticated user's profile information",
+     *     security={{"sanctum": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", maxLength=255, example="John Doe"),
+     *             @OA\Property(property="email", type="string", format="email", maxLength=255, example="john@example.com"),
+     *             @OA\Property(property="location_preference", type="object"),
+     *             @OA\Property(property="notification_settings", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Profile updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validation failed"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
      */
     public function updateProfile(Request $request): JsonResponse
     {

@@ -7,11 +7,54 @@ use App\Models\NotificationSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
 
 class NotificationController extends Controller
 {
     /**
-     * Subscribe to push notifications
+     * @OA\Post(
+     *     path="/notifications/subscribe",
+     *     tags={"Notifications"},
+     *     summary="Subscribe to push notifications",
+     *     description="Subscribe to push notifications with device endpoint and keys",
+     *     security={{"sanctum": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"endpoint", "p256dh_key", "auth_key"},
+     *             @OA\Property(property="endpoint", type="string", example="https://fcm.googleapis.com/fcm/send/..."),
+     *             @OA\Property(property="p256dh_key", type="string", example="BEl62iUYgUivxIkv69yViEuiBIa40HI..."),
+     *             @OA\Property(property="auth_key", type="string", example="tBHItJI5svbpez7KI4CCXg=="),
+     *             @OA\Property(property="settings", type="object", example={"air_quality_alerts": true, "daily_reports": false})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully subscribed",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Successfully subscribed to notifications"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validation failed"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
      */
     public function subscribe(Request $request): JsonResponse
     {
@@ -54,7 +97,29 @@ class NotificationController extends Controller
     }
 
     /**
-     * Unsubscribe from push notifications
+     * @OA\Post(
+     *     path="/notifications/unsubscribe",
+     *     tags={"Notifications"},
+     *     summary="Unsubscribe from push notifications",
+     *     description="Unsubscribe from all push notifications",
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully unsubscribed",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Successfully unsubscribed from notifications")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     )
+     * )
      */
     public function unsubscribe(Request $request): JsonResponse
     {
@@ -70,7 +135,34 @@ class NotificationController extends Controller
     }
 
     /**
-     * Get notification settings
+     * @OA\Get(
+     *     path="/notifications/settings",
+     *     tags={"Notifications"},
+     *     summary="Get notification settings",
+     *     description="Retrieve user's notification settings and active subscriptions",
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Settings retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="subscriptions", type="array", @OA\Items(type="object")),
+     *                 @OA\Property(property="settings", type="object")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     )
+     * )
      */
     public function getSettings(Request $request): JsonResponse
     {
@@ -90,7 +182,50 @@ class NotificationController extends Controller
     }
 
     /**
-     * Update notification settings
+     * @OA\Put(
+     *     path="/notifications/settings",
+     *     tags={"Notifications"},
+     *     summary="Update notification settings",
+     *     description="Update user's notification preferences",
+     *     security={{"sanctum": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"notification_settings"},
+     *             @OA\Property(
+     *                 property="notification_settings",
+     *                 type="object",
+     *                 example={"air_quality_alerts": true, "daily_reports": false, "weekly_summary": true}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Settings updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Notification settings updated successfully"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validation failed"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
      */
     public function updateSettings(Request $request): JsonResponse
     {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\SubmissionController;
 use App\Http\Controllers\Api\AirQualityController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\NotificationController;
+use OpenApi\Annotations as OA;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,7 +63,23 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function ()
     Route::get('analytics', [AirQualityController::class, 'getAnalytics']);
 });
 
-// Health check route
+/**
+ * @OA\Get(
+ *     path="/health",
+ *     tags={"Health"},
+ *     summary="Health check",
+ *     description="Check if the API is running and healthy",
+ *     @OA\Response(
+ *         response=200,
+ *         description="API is healthy",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="status", type="string", example="ok"),
+ *             @OA\Property(property="timestamp", type="string", format="date-time", example="2024-01-15T10:30:00Z"),
+ *             @OA\Property(property="version", type="string", example="1.0.0")
+ *         )
+ *     )
+ * )
+ */
 Route::get('health', function () {
     return response()->json([
         'status' => 'ok',

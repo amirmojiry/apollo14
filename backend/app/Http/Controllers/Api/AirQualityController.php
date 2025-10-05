@@ -8,6 +8,7 @@ use App\Services\PythonService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
+use OpenApi\Annotations as OA;
 
 class AirQualityController extends Controller
 {
@@ -20,8 +21,68 @@ class AirQualityController extends Controller
         $this->pythonService = $pythonService;
     }
 
-    /*
-     * Get current air quality for a location
+    /**
+     * @OA\Get(
+     *     path="/air-quality/current",
+     *     tags={"Air Quality"},
+     *     summary="Get current air quality for a location",
+     *     description="Retrieves current air quality data including AQI, NO2, O3, and PM2.5 levels for the specified coordinates",
+     *     @OA\Parameter(
+     *         name="lat",
+     *         in="query",
+     *         required=true,
+     *         description="Latitude coordinate",
+     *         @OA\Schema(type="number", format="float", minimum=-90, maximum=90, example=40.7128)
+     *     ),
+     *     @OA\Parameter(
+     *         name="lng",
+     *         in="query",
+     *         required=true,
+     *         description="Longitude coordinate",
+     *         @OA\Schema(type="number", format="float", minimum=-180, maximum=180, example=-74.0060)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="aqi_value", type="integer", example=3),
+     *                 @OA\Property(property="no2_level", type="number", format="float", example=25.5),
+     *                 @OA\Property(property="o3_level", type="number", format="float", example=45.2),
+     *                 @OA\Property(property="pm25_level", type="number", format="float", example=12.8),
+     *                 @OA\Property(property="timestamp", type="string", format="date-time", example="2024-01-15T10:30:00Z"),
+     *                 @OA\Property(property="data_sources", type="array", @OA\Items(type="string"), example={"EPA", "OpenAQ"}),
+     *                 @OA\Property(
+     *                     property="location",
+     *                     type="object",
+     *                     @OA\Property(property="latitude", type="number", example=40.7128),
+     *                     @OA\Property(property="longitude", type="number", example=-74.0060)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Invalid location coordinates"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Failed to fetch air quality data"),
+     *             @OA\Property(property="error", type="string", example="Service unavailable")
+     *         )
+     *     )
+     * )
      */
     public function getCurrent(Request $request): JsonResponse
     {
@@ -73,7 +134,63 @@ class AirQualityController extends Controller
     }
 
     /**
-     * Get 7-day air quality forecast
+     * @OA\Get(
+     *     path="/air-quality/forecast",
+     *     tags={"Air Quality"},
+     *     summary="Get 7-day air quality forecast",
+     *     description="Retrieves 7-day air quality forecast data for the specified coordinates",
+     *     @OA\Parameter(
+     *         name="lat",
+     *         in="query",
+     *         required=true,
+     *         description="Latitude coordinate",
+     *         @OA\Schema(type="number", format="float", minimum=-90, maximum=90, example=40.7128)
+     *     ),
+     *     @OA\Parameter(
+     *         name="lng",
+     *         in="query",
+     *         required=true,
+     *         description="Longitude coordinate",
+     *         @OA\Schema(type="number", format="float", minimum=-180, maximum=180, example=-74.0060)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="date", type="string", format="date", example="2024-01-15"),
+     *                     @OA\Property(property="aqi_value", type="integer", example=3),
+     *                     @OA\Property(property="no2_level", type="number", format="float", example=25.5),
+     *                     @OA\Property(property="o3_level", type="number", format="float", example=45.2),
+     *                     @OA\Property(property="pm25_level", type="number", format="float", example=12.8)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Invalid location coordinates"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Failed to fetch forecast data"),
+     *             @OA\Property(property="error", type="string", example="Service unavailable")
+     *         )
+     *     )
+     * )
      */
     public function getForecast(Request $request): JsonResponse
     {
@@ -114,7 +231,70 @@ class AirQualityController extends Controller
     }
 
     /**
-     * Get historical air quality data
+     * @OA\Get(
+     *     path="/air-quality/history",
+     *     tags={"Air Quality"},
+     *     summary="Get historical air quality data",
+     *     description="Retrieves historical air quality data for the specified coordinates and time period",
+     *     @OA\Parameter(
+     *         name="lat",
+     *         in="query",
+     *         required=true,
+     *         description="Latitude coordinate",
+     *         @OA\Schema(type="number", format="float", minimum=-90, maximum=90, example=40.7128)
+     *     ),
+     *     @OA\Parameter(
+     *         name="lng",
+     *         in="query",
+     *         required=true,
+     *         description="Longitude coordinate",
+     *         @OA\Schema(type="number", format="float", minimum=-180, maximum=180, example=-74.0060)
+     *     ),
+     *     @OA\Parameter(
+     *         name="days",
+     *         in="query",
+     *         required=false,
+     *         description="Number of days to retrieve (1-30, default: 7)",
+     *         @OA\Schema(type="integer", minimum=1, maximum=30, example=7)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="date", type="string", format="date", example="2024-01-15"),
+     *                     @OA\Property(property="aqi_value", type="integer", example=3),
+     *                     @OA\Property(property="no2_level", type="number", format="float", example=25.5),
+     *                     @OA\Property(property="o3_level", type="number", format="float", example=45.2),
+     *                     @OA\Property(property="pm25_level", type="number", format="float", example=12.8)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Invalid parameters"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Failed to fetch historical data"),
+     *             @OA\Property(property="error", type="string", example="Service unavailable")
+     *         )
+     *     )
+     * )
      */
     public function getHistory(Request $request): JsonResponse
     {
@@ -158,7 +338,62 @@ class AirQualityController extends Controller
     }
 
     /**
-     * Get air quality alerts for a location
+     * @OA\Get(
+     *     path="/air-quality/alerts",
+     *     tags={"Air Quality"},
+     *     summary="Get air quality alerts for a location",
+     *     description="Retrieves air quality alerts and warnings for the specified coordinates",
+     *     @OA\Parameter(
+     *         name="lat",
+     *         in="query",
+     *         required=true,
+     *         description="Latitude coordinate",
+     *         @OA\Schema(type="number", format="float", minimum=-90, maximum=90, example=40.7128)
+     *     ),
+     *     @OA\Parameter(
+     *         name="lng",
+     *         in="query",
+     *         required=true,
+     *         description="Longitude coordinate",
+     *         @OA\Schema(type="number", format="float", minimum=-180, maximum=180, example=-74.0060)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="alert_type", type="string", example="high_pollution"),
+     *                     @OA\Property(property="severity", type="string", example="moderate"),
+     *                     @OA\Property(property="message", type="string", example="Air quality is unhealthy for sensitive groups"),
+     *                     @OA\Property(property="valid_until", type="string", format="date-time", example="2024-01-15T18:00:00Z")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Invalid location coordinates"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Failed to fetch alerts"),
+     *             @OA\Property(property="error", type="string", example="Service unavailable")
+     *         )
+     *     )
+     * )
      */
     public function getAlerts(Request $request): JsonResponse
     {

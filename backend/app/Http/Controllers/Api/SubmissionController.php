@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
+use OpenApi\Annotations as OA;
 
 class SubmissionController extends Controller
 {
@@ -26,7 +27,98 @@ class SubmissionController extends Controller
     }
 
     /**
-     * Store a new photo submission
+     * @OA\Post(
+     *     path="/submissions",
+     *     tags={"Submissions"},
+     *     summary="Submit a photo with air quality guess",
+     *     description="Submit a photo with user's guess of air quality level and location coordinates",
+     *     security={{"sanctum": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"photo", "user_guess", "latitude", "longitude"},
+     *                 @OA\Property(
+     *                     property="photo",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="Photo file (JPEG, PNG, JPG, GIF, max 10MB)"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="user_guess",
+     *                     type="integer",
+     *                     minimum=1,
+     *                     maximum=5,
+     *                     description="User's guess of air quality level (1-5)",
+     *                     example=3
+     *                 ),
+     *                 @OA\Property(
+     *                     property="latitude",
+     *                     type="number",
+     *                     format="float",
+     *                     minimum=-90,
+     *                     maximum=90,
+     *                     description="Latitude coordinate",
+     *                     example=40.7128
+     *                 ),
+     *                 @OA\Property(
+     *                     property="longitude",
+     *                     type="number",
+     *                     format="float",
+     *                     minimum=-180,
+     *                     maximum=180,
+     *                     description="Longitude coordinate",
+     *                     example=-74.0060
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Submission successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=123),
+     *                 @OA\Property(property="user_guess", type="integer", example=3),
+     *                 @OA\Property(property="actual_level", type="integer", example=3),
+     *                 @OA\Property(property="accuracy_score", type="integer", example=5),
+     *                 @OA\Property(property="photo_url", type="string", example="http://localhost:8000/storage/submissions/photo.jpg"),
+     *                 @OA\Property(property="forecast", type="array", @OA\Items(type="object")),
+     *                 @OA\Property(property="submitted_at", type="string", format="date-time", example="2024-01-15T10:30:00Z")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Authentication required")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validation failed"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Failed to process submission"),
+     *             @OA\Property(property="error", type="string", example="Service unavailable")
+     *         )
+     *     )
+     * )
      */
     public function store(Request $request): JsonResponse
     {
@@ -102,7 +194,49 @@ class SubmissionController extends Controller
     }
 
     /**
-     * Get user's submission history
+     * @OA\Get(
+     *     path="/submissions",
+     *     tags={"Submissions"},
+     *     summary="Get user's submission history",
+     *     description="Retrieves paginated list of user's photo submissions",
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=123),
+     *                     @OA\Property(property="user_guess", type="integer", example=3),
+     *                     @OA\Property(property="actual_level", type="integer", example=3),
+     *                     @OA\Property(property="accuracy_score", type="integer", example=5),
+     *                     @OA\Property(property="photo_url", type="string", example="http://localhost:8000/storage/submissions/photo.jpg"),
+     *                     @OA\Property(property="submitted_at", type="string", format="date-time", example="2024-01-15T10:30:00Z")
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="pagination",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=5),
+     *                 @OA\Property(property="per_page", type="integer", example=20),
+     *                 @OA\Property(property="total", type="integer", example=100)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Authentication required")
+     *         )
+     *     )
+     * )
      */
     public function index(Request $request): JsonResponse
     {
@@ -132,7 +266,56 @@ class SubmissionController extends Controller
     }
 
     /**
-     * Get specific submission details
+     * @OA\Get(
+     *     path="/submissions/{id}",
+     *     tags={"Submissions"},
+     *     summary="Get specific submission details",
+     *     description="Retrieves detailed information about a specific submission",
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Submission ID",
+     *         @OA\Schema(type="integer", example=123)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=123),
+     *                 @OA\Property(property="user_guess", type="integer", example=3),
+     *                 @OA\Property(property="actual_level", type="integer", example=3),
+     *                 @OA\Property(property="accuracy_score", type="integer", example=5),
+     *                 @OA\Property(property="photo_url", type="string", example="http://localhost:8000/storage/submissions/photo.jpg"),
+     *                 @OA\Property(property="location_lat", type="number", format="float", example=40.7128),
+     *                 @OA\Property(property="location_lng", type="number", format="float", example=-74.0060),
+     *                 @OA\Property(property="air_quality_data", type="object"),
+     *                 @OA\Property(property="submitted_at", type="string", format="date-time", example="2024-01-15T10:30:00Z")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Authentication required")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Submission not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Submission not found")
+     *         )
+     *     )
+     * )
      */
     public function show($id): JsonResponse
     {
