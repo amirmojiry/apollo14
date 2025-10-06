@@ -248,3 +248,4 @@ class AirQualityService
         return (int) $baseAQI;
     }
 }
+
