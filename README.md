@@ -13,6 +13,8 @@
 ### Link
 https://apollo14.vercel.app
 
+![Home page screenshot](Demo_home_screenshot.png)
+
 ### Video
 
 ## Project Overview
