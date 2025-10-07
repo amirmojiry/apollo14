@@ -56,6 +56,8 @@ export default function CameraBox() {
   const [photo, setPhoto] = useState(null);
   const [stream, setStream] = useState(null);
   const [cameraOn, setCameraOn] = useState(false);
+  const [showResult, setShowResult] = useState(false);
+  const [realValue, setRealValue] = useState(null);
 
   const { setImage, barValue, setBarValue, location, setLocation, sendData } =
     useSenderStore();
@@ -135,7 +137,10 @@ export default function CameraBox() {
     const data = { image: photo, location, barValue };
     console.log("Finalized data (local):", data);
     sendData(); 
-    alert("Image, location, and slider value finalized & sent!");
+    // Demo: simulate real air pollution measurement (e.g., PM2.5 ug/m3)
+    const simulatedReal = Math.round(10 + Math.random() * 90); // 10..100
+    setRealValue(simulatedReal);
+    setShowResult(true);
   };
 
   const canFinalize = photo && location;
@@ -221,6 +226,53 @@ export default function CameraBox() {
           <Upload size={18} /> Finalize
         </Button>
       </div>
+
+      {/* Result card (demo) */}
+      {showResult && realValue !== null && (
+        <div className="w-full mt-4 bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Estimated vs Real Air Pollution</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            Demo result based on your photo, location and adjustment.
+          </p>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30">
+              <div className="text-xs text-gray-500 dark:text-gray-400">Your Guess</div>
+              <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">{barValue}</div>
+              <div className="text-xs text-gray-500">PM2.5 (µg/m³)</div>
+            </div>
+            <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/30">
+              <div className="text-xs text-gray-500 dark:text-gray-400">Real Measurement</div>
+              <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">{realValue}</div>
+              <div className="text-xs text-gray-500">PM2.5 (µg/m³)</div>
+            </div>
+          </div>
+
+          {(() => {
+            const diff = Math.abs((realValue ?? 0) - (barValue ?? 0));
+            const accuracy = Math.max(0, 100 - Math.min(100, Math.round((diff / Math.max(1, realValue)) * 100)));
+            const color = accuracy > 75 ? "bg-emerald-500" : accuracy > 50 ? "bg-yellow-500" : "bg-red-500";
+            return (
+              <div className="mt-4">
+                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                  <span>Accuracy</span>
+                  <span>{accuracy}%</span>
+                </div>
+                <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className={`${color} h-3`} style={{ width: `${accuracy}%` }} />
+                </div>
+                <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  {accuracy > 75 ? "Great! Your guess is very close." : accuracy > 50 ? "Nice try! You're in the ballpark." : "Interesting! Real value was quite different this time."}
+                </div>
+              </div>
+            );
+          })()}
+
+          <div className="mt-4 text-xs text-gray-500">
+            Lat: {location?.latitude?.toFixed?.(5)} · Lng: {location?.longitude?.toFixed?.(5)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
