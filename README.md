@@ -1,6 +1,7 @@
 # Apollo14 - NASA Space Apps Challenge 2025
 
 ## Team Information
+
 - **Team Name**: Apollo14
 - **Challenge**: From EarthData to Action: Cloud Computing with Earth Observation Data for Predicting Cleaner, Safer Skies
 - **Team Members**:
@@ -10,15 +11,18 @@
   - Amir Mojiri
 
 ## Demo
+
 ### Link
+
 https://apollo14.vercel.app
 
-![Home page screenshot](Demo_home_screenshot.png)
+[![Home page screenshot](Demo_home_screenshot.png)](https://apollo14.vercel.app)
 
 ### Video
+
 https://youtu.be/aniljKMVhZQ
 
-![See the demo video](https://i9.ytimg.com/vi_webp/aniljKMVhZQ/mq2.webp?sqp=CKSblMcG&rs=AOn4CLC7Ido86mNOkdYvvz6WbHFqeSgM5A)
+[![See the demo video](https://img.youtube.com/vi/aniljKMVhZQ/sddefault.jpg)](https://youtu.be/aniljKMVhZQ)
 
 ## Project Overview
 
@@ -88,14 +92,16 @@ apollo14/
 ## Application Workflow
 
 ### 1. Photo Upload and Assessment
+
 ```
-User takes photo → Uploads to app → Sets pollution guess (1-5 scale) → 
+User takes photo → Uploads to app → Sets pollution guess (1-5 scale) →
 App sends location + photo to backend → Backend stores submission
 ```
 
 ### 2. Data Processing Pipeline
+
 ```
-Backend receives location → Sends to Python service → 
+Backend receives location → Sends to Python service →
 Python service queries:
 - TEMPO satellite data
 - Ground-based air quality stations
@@ -104,8 +110,9 @@ Python service queries:
 ```
 
 ### 3. Results and Scoring
+
 ```
-Python service returns data → Backend calculates user score → 
+Python service returns data → Backend calculates user score →
 Sends results to frontend → App displays:
 - Actual pollution level
 - User's guess comparison
@@ -114,33 +121,38 @@ Sends results to frontend → App displays:
 ```
 
 ### 4. Historical Tracking
+
 ```
-User requests history → Backend queries database → 
+User requests history → Backend queries database →
 Returns submission history with trends → Frontend displays analytics
 ```
 
 ### 5. Alert System
+
 ```
-Python service monitors conditions → Detects poor air quality → 
-Sends alert to backend → Backend triggers push notification → 
+Python service monitors conditions → Detects poor air quality →
+Sends alert to backend → Backend triggers push notification →
 User receives proactive warning
 ```
 
 ## Data Sources Integration
 
 ### NASA TEMPO Data
+
 - **Source**: NASA's Tropospheric Emissions: Monitoring of Pollution mission
 - **Data Types**: Nitrogen dioxide (NO₂), formaldehyde (HCHO), ozone (O₃)
 - **Update Frequency**: Near real-time (hourly)
 - **Coverage**: North America
 
 ### Ground-Based Measurements
+
 - **Pandora Network**: High-resolution atmospheric composition
 - **OpenAQ**: Global air quality data from various sources
 - **TolNet**: Tropospheric ozone lidar network
 - **EPA AirNow**: US Environmental Protection Agency data
 
 ### Weather Data
+
 - **Source**: National Weather Service APIs
 - **Parameters**: Temperature, humidity, wind speed/direction, atmospheric pressure
 - **Update Frequency**: Hourly forecasts
@@ -148,6 +160,7 @@ User receives proactive warning
 ## Technology Stack
 
 ### Frontend (React)
+
 - **Framework**: React 18+
 - **State Management**: Redux Toolkit
 - **UI Components**: Material-UI or Ant Design
@@ -157,6 +170,7 @@ User receives proactive warning
 - **Charts**: Chart.js or D3.js for data visualization
 
 ### Backend (Laravel)
+
 - **Framework**: Laravel 10+
 - **Database**: PostgreSQL or MySQL
 - **Authentication**: Laravel Sanctum
@@ -166,6 +180,7 @@ User receives proactive warning
 - **Caching**: Redis for performance optimization
 
 ### Python Service
+
 - **Framework**: FastAPI or Flask
 - **Data Processing**: Pandas, NumPy
 - **Satellite Data**: HDF5, NetCDF libraries
@@ -176,6 +191,7 @@ User receives proactive warning
 ## Setup Instructions
 
 ### Prerequisites
+
 - Node.js 18+ and npm
 - PHP 8.1+ and Composer
 - Python 3.9+
@@ -186,12 +202,14 @@ User receives proactive warning
 ### Development Environment Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd apollo14
    ```
 
 2. **Backend Setup (Laravel)**
+
    ```bash
    cd backend
    composer install
@@ -202,6 +220,7 @@ User receives proactive warning
    ```
 
 3. **Frontend Setup (React)**
+
    ```bash
    cd frontend
    npm install
@@ -209,6 +228,7 @@ User receives proactive warning
    ```
 
 4. **Python Service Setup**
+
    ```bash
    cd python-service
    python -m venv venv
@@ -218,10 +238,11 @@ User receives proactive warning
    ```
 
 5. **Database Setup**
+
    ```bash
    # Create PostgreSQL database
    createdb apollo14_air_quality
-   
+
    # Run migrations
    cd backend
    php artisan migrate
@@ -230,6 +251,7 @@ User receives proactive warning
 ### Environment Configuration
 
 #### Backend (.env)
+
 ```env
 APP_NAME=Apollo14
 APP_ENV=local
@@ -254,6 +276,7 @@ OPENAQ_API_KEY=your-openaq-api-key
 ```
 
 #### Frontend (.env)
+
 ```env
 REACT_APP_API_URL=http://localhost:8000/api
 REACT_APP_MAPS_API_KEY=your-maps-api-key
@@ -263,22 +286,26 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 ## API Endpoints
 
 ### User Submissions
+
 - `POST /api/submissions` - Create new photo submission
 - `GET /api/ubmissions` - Get user's submission history
 - `GET /api/submissions/{id}` - Get specific submission details
 
 ### Air Quality Data
+
 - `GET /api/air-quality/current` - Get current air quality for location
 - `GET /api/air-quality/forecast` - Get 7-day forecast
 - `GET /api/air-quality/history` - Get historical data
 
 ### Notifications
+
 - `POST /api/notifications/subscribe` - Subscribe to push notifications
 - `POST /api/notifications/unsubscribe` - Unsubscribe from notifications
 
 ## Database Schema
 
 ### Users Table
+
 ```sql
 - id (primary key)
 - name
@@ -290,6 +317,7 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 ```
 
 ### Submissions Table
+
 ```sql
 - id (primary key)
 - user_id (foreign key)
@@ -303,6 +331,7 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 ```
 
 ### AirQualityData Table
+
 ```sql
 - id (primary key)
 - location_lat
@@ -318,6 +347,7 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 ## Deployment Considerations
 
 ### Cloud Infrastructure
+
 - **Frontend**: Vercel, Netlify, or AWS S3 + CloudFront
 - **Backend**: AWS EC2, DigitalOcean Droplet, or Heroku
 - **Database**: AWS RDS PostgreSQL or managed database service
@@ -326,6 +356,7 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 - **CDN**: CloudFlare for global content delivery
 
 ### Scalability Features
+
 - **Horizontal Scaling**: Load balancers for backend services
 - **Caching**: Redis for API response caching
 - **Database Optimization**: Indexing and query optimization
@@ -335,16 +366,19 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 ## Testing Strategy
 
 ### Frontend Testing
+
 - **Unit Tests**: Jest + React Testing Library
 - **Integration Tests**: Cypress for E2E testing
 - **Component Tests**: Storybook for component documentation
 
 ### Backend Testing
+
 - **Unit Tests**: PHPUnit for Laravel
 - **API Tests**: Postman or automated API testing
 - **Database Tests**: Factory and seeder testing
 
 ### Python Service Testing
+
 - **Unit Tests**: pytest
 - **Integration Tests**: Test data processing pipelines
 - **Data Validation**: Test satellite data parsing
@@ -352,12 +386,14 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 ## Security Considerations
 
 ### Data Protection
+
 - **Photo Privacy**: Secure storage and processing
 - **Location Data**: Anonymization options
 - **API Security**: Rate limiting and authentication
 - **HTTPS**: SSL/TLS encryption for all communications
 
 ### User Privacy
+
 - **GDPR Compliance**: Data deletion and export options
 - **Consent Management**: Clear privacy policy
 - **Data Minimization**: Only collect necessary data
@@ -365,6 +401,7 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 ## Future Enhancements
 
 ### Advanced Features
+
 - **Machine Learning**: Computer vision for automatic pollution detection
 - **Social Features**: Community challenges and leaderboards
 - **Health Integration**: Connect with health apps and wearables
@@ -372,6 +409,7 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 - **IoT Integration**: Connect with personal air quality sensors
 
 ### Data Expansion
+
 - **Global Coverage**: Expand beyond North America
 - **Additional Pollutants**: Include more air quality parameters
 - **Historical Analysis**: Long-term trend analysis
@@ -380,6 +418,7 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 ## Contributing Guidelines
 
 ### Development Workflow
+
 1. Fork the repository
 2. Create a feature branch
 3. Make changes with proper testing
@@ -387,6 +426,7 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 5. Code review and merge
 
 ### Code Standards
+
 - **Frontend**: ESLint + Prettier
 - **Backend**: PSR-12 PHP standards
 - **Python**: PEP 8 style guide
@@ -395,16 +435,19 @@ REACT_APP_PUSH_VAPID_KEY=your-vapid-key
 ## Resources and References
 
 ### NASA Data Sources
+
 - [TEMPO Mission](https://tempo.si.edu/)
 - [NASA Earthdata](https://earthdata.nasa.gov/)
 - [GES DISC](https://disc.gsfc.nasa.gov/)
 
 ### Air Quality Networks
+
 - [OpenAQ](https://openaq.org/)
 - [Pandora Network](https://pandonia-global-network.org/)
 - [EPA AirNow](https://www.airnow.gov/)
 
 ### Development Resources
+
 - [React Documentation](https://reactjs.org/docs/)
 - [Laravel Documentation](https://laravel.com/docs)
 - [NASA API Documentation](https://api.nasa.gov/)
@@ -419,4 +462,4 @@ For questions about this project, please contact the Apollo14 team through the N
 
 ---
 
-*This project is part of the NASA Space Apps Challenge 2025: "From EarthData to Action: Cloud Computing with Earth Observation Data for Predicting Cleaner, Safer Skies"*
+_This project is part of the NASA Space Apps Challenge 2025: "From EarthData to Action: Cloud Computing with Earth Observation Data for Predicting Cleaner, Safer Skies"_
